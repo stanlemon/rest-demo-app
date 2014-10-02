@@ -53,4 +53,49 @@ class Person
     {
         $this->cars = new ArrayCollection();
     }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    public function getMother()
+    {
+        return $this->mother;
+    }
+
+    public function setMother(Person $mother)
+    {
+        $this->mother = $mother;
+    }
+
+    public function getFather()
+    {
+        return $this->father;
+    }
+
+    public function setFather(Person $father)
+    {
+        $this->father = $father;
+    }
+
+    public function getCars()
+    {
+        return $this->cars;
+    }
+
+    public function setCars(ArrayCollection $cars)
+    {
+        $this->cars = $cars;
+    }
 }
