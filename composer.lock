@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "aa4d6d0573a971c68722c40805c7853f",
+    "hash": "1968dfa16a1c58ba9d58782a2316d238",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1380,16 +1380,16 @@
         },
         {
             "name": "stanlemon/rest-bundle",
-            "version": "dev-master",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stanlemon/rest-bundle.git",
-                "reference": "2c65e492a90397df2a7e6362614014bfab02a6fe"
+                "reference": "6c068de3c9f3dc1f10aa9e34474a5267137f1c89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stanlemon/rest-bundle/zipball/2c65e492a90397df2a7e6362614014bfab02a6fe",
-                "reference": "2c65e492a90397df2a7e6362614014bfab02a6fe",
+                "url": "https://api.github.com/repos/stanlemon/rest-bundle/zipball/6c068de3c9f3dc1f10aa9e34474a5267137f1c89",
+                "reference": "6c068de3c9f3dc1f10aa9e34474a5267137f1c89",
                 "shasum": ""
             },
             "require": {
@@ -1423,7 +1423,7 @@
                 }
             ],
             "description": "Create REST endpoints for Doctrine entities",
-            "time": "2014-10-02 04:27:48"
+            "time": "2014-10-03 01:10:50"
         },
         {
             "name": "swiftmailer/swiftmailer",
