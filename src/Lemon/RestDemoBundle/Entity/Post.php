@@ -43,11 +43,15 @@ class Post
 
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection|\Lemon\RestDemoBundle\Entity\Tag[]
-     * @ORM\OneToMany(
-     *  targetEntity="Lemon\RestDemoBundle\Entity\Tag",
-     *  mappedBy="post",
-     *  cascade={"all"}
+     * @ORM\ManyToMany(targetEntity="Lemon\RestDemoBundle\Entity\Tag", cascade={"all"})
+     * @ORM\JoinTable(name="Post_Tag",
+     *     joinColumns={
+     *          @ORM\JoinColumn(name="post_id", referencedColumnName="id")
+     *     },
+     *     inverseJoinColumns={
+     *          @ORM\JoinColumn(name="tag_id", referencedColumnName="id", unique=true)
+     *     }
      * )
-     */
+     **/
     protected $tags;
 }
