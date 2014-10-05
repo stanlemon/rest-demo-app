@@ -38,8 +38,6 @@ class Post
      *  mappedBy="post",
      *  cascade={"all"}
      * )
-     * @Serializer\Accessor(getter="getCommentIds", setter="setCommentsFromIds")
-     * @Serializer\Type("array")
      */
     protected $comments;
 
@@ -51,57 +49,16 @@ class Post
      *          @ORM\JoinColumn(name="post_id", referencedColumnName="id")
      *     },
      *     inverseJoinColumns={
-     *          @ORM\JoinColumn(name="tag_id", referencedColumnName="id", unique=true)
+     *          @ORM\JoinColumn(name="tag_id", referencedColumnName="id")
      *     }
      * )
-     * @Serializer\Accessor(getter="getTagIds", setter="setTagsFromIds")
-     * @Serializer\Type("array")
+     * @Serializer\Type("Lemon\RestDemoBundle\Serializer\IdCollection<Lemon\RestDemoBundle\Entity\Tag>")
      **/
     protected $tags;
 
-    public function getTagIds()
+    public function __construct()
     {
-        $tagIds = array();
-
-        foreach ($this->tags as $tag) {
-            $tagIds[] = $tag->getId();
-        }
-
-        return $tagIds;
-    }
-
-    public function setTagsFromIds($tagIds)
-    {
-        if (is_null($this->tags)) {
-            $this->tags = new ArrayCollection;
-        }
-        foreach ($tagIds as $tagId) {
-            $tag = new Tag;
-            $tag->setId($tagId);
-            $this->tags->add($tagId);
-        }
-    }
-
-    public function getCommentIds()
-    {
-        $commentIds = array();
-
-        foreach ($this->comments as $comment) {
-            $commentIds[] = $comment->getId();
-        }
-
-        return $commentIds;
-    }
-
-    public function setCommentsFromIds($commentIds)
-    {
-        if (is_null($this->comments)) {
-            $this->comments = new ArrayCollection;
-        }
-        foreach ($commentIds as $commentId) {
-            $comment = new Comment;
-            $comment->setId($commentId);
-            $this->comments->add($comment);
-        }
+        $this->tags = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 }
