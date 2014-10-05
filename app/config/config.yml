@@ -58,3 +58,6 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+lemon_rest:
+    envelope: Lemon\RestBundle\Object\Envelope\FlattenedEnvelope

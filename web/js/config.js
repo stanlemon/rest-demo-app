@@ -31,8 +31,8 @@
 
         function pagination(page, maxPerPage) {
             return {
-                offset: (page - 1) * maxPerPage,
-                limit: maxPerPage
+                _offset: (page - 1) * maxPerPage,
+                _limit: maxPerPage
             }
         }
 
