@@ -26,7 +26,8 @@ class Comment
     protected $body;
 
     /**
-     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     * @ORM\Column(name="created_at", type="date", nullable=false)
+     * @Serializer\Type("DateTime<'M j, Y'>")
      */
     protected $created_at;
 
