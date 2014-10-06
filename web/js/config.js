@@ -173,7 +173,7 @@
             );
 
         var app = new Application('ng-admin backend demo')
-            .baseApiUrl('./app_dev.php/api/')
+            .baseApiUrl('./api/')
             .addEntity(post)
             .addEntity(comment)
             .addEntity(tag);
