@@ -16,3 +16,5 @@ fi
 
 $OPENSHIFT_REPO_DIR/app/console --env=prod cache:clear
 $OPENSHIFT_REPO_DIR/app/console --env=prod cache:warm
+
+cp $OPENSHIFT_REPO_DIR/app/symfony.db $OPENSHIFT_REPO_DIR/app/symfony.db-bak
