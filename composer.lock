@@ -1384,12 +1384,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/stanlemon/rest-bundle.git",
-                "reference": "59333c138833112e103c9ee7d61bd02ee2e18c1e"
+                "reference": "55d289e00820c5e47bbcd4e650a87fc93904d68e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stanlemon/rest-bundle/zipball/59333c138833112e103c9ee7d61bd02ee2e18c1e",
-                "reference": "59333c138833112e103c9ee7d61bd02ee2e18c1e",
+                "url": "https://api.github.com/repos/stanlemon/rest-bundle/zipball/55d289e00820c5e47bbcd4e650a87fc93904d68e",
+                "reference": "55d289e00820c5e47bbcd4e650a87fc93904d68e",
                 "shasum": ""
             },
             "require": {
@@ -1424,7 +1424,7 @@
                 }
             ],
             "description": "Create REST endpoints for Doctrine entities",
-            "time": "2014-10-06 00:43:51"
+            "time": "2014-10-06 10:06:48"
         },
         {
             "name": "swiftmailer/swiftmailer",

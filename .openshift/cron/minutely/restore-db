@@ -1,2 +1,2 @@
 #!/bin/bash
-cp $OPENSHIFT_REPO_DIR/app/symfony.db-bak $OPENSHIFT_REPO_DIR/app/symfony.db
+cp -f $OPENSHIFT_REPO_DIR/app/symfony.db-bak $OPENSHIFT_REPO_DIR/app/symfony.db
