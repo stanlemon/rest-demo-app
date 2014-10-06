@@ -14,7 +14,7 @@
                 $scope.displayPost = function(entity) {
                     var postId = entity.getField('post_id').value;
 
-                    $location.path('/edit/posts/' + postId);
+                    $location.path('/edit/post/' + postId);
                 }
             }
         }

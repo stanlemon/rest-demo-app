@@ -1,4 +1,9 @@
 services:
+    lemon_rest_demo.event.search_sanitizer_subscriber:
+        class: Lemon\RestDemoBundle\Event\SearchSanitizerSubscriber
+        tags:
+            - { name: lemon_rest.event_subscriber }
+
     lemon_rest_demo.serializer.id_collection.handler:
         class: Lemon\RestDemoBundle\Serializer\IdCollectionHandler
         arguments:
