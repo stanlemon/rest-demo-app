@@ -61,3 +61,7 @@ swiftmailer:
 
 lemon_rest:
     envelope: Lemon\RestBundle\Object\Envelope\FlattenedEnvelope
+    mappings:
+        - { name: post, class: Lemon\RestDemoBundle\Entity\Post }
+        - { name: comment, class: Lemon\RestDemoBundle\Entity\Comment }
+        - { name: tag, class: Lemon\RestDemoBundle\Entity\Tag }

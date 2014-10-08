@@ -9,7 +9,6 @@ use Lemon\RestBundle\Annotation as Rest;
 /**
  * @ORM\Table()
  * @ORM\Entity()
- * @Rest\Resource()
  */
 class Tag
 {

@@ -4,13 +4,6 @@ services:
         tags:
             - { name: lemon_rest.event_subscriber }
 
-    lemon_rest_demo.serializer.id_collection.handler:
-        class: Lemon\RestDemoBundle\Serializer\IdCollectionHandler
-        arguments:
-            - @doctrine
-        tags:
-            - { name: jms_serializer.subscribing_handler }
-
     monolog_line_formatter:
         class: Monolog\Formatter\LineFormatter
         arguments: [null, null, true, false]

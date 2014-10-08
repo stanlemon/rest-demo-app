@@ -10,7 +10,6 @@ use Lemon\RestBundle\Annotation as Rest;
 /**
  * @ORM\Table()
  * @ORM\Entity()
- * @Rest\Resource()
  */
 class Post
 {
@@ -52,7 +51,7 @@ class Post
      *          @ORM\JoinColumn(name="tag_id", referencedColumnName="id")
      *     }
      * )
-     * @Serializer\Type("Lemon\RestDemoBundle\Serializer\IdCollection<Lemon\RestDemoBundle\Entity\Tag>")
+     * @Serializer\Type("Lemon\RestBundle\Serializer\IdCollection<Lemon\RestDemoBundle\Entity\Tag>")
      **/
     protected $tags;
 
