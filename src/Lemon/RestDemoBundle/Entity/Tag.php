@@ -4,7 +4,6 @@ namespace Lemon\RestDemoBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
-use Lemon\RestBundle\Annotation as Rest;
 
 /**
  * @ORM\Table()
