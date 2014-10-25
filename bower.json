@@ -1,6 +1,6 @@
 {
   "name": "lemon-rest-bundle-demo",
   "dependencies": {
-    "ng-admin": "git@github.com:marmelab/ng-admin.git#master"
+    "ng-admin": "~0.2"
   }
 }

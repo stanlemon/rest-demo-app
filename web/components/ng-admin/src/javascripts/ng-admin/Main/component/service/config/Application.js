@@ -13,9 +13,10 @@ define(function (require) {
         headers: defaultHeaders
     };
 
-    function Application() {
+    function Application(title) {
         this.entities = {};
         this.config = angular.copy(config);
+        this.config.title = title || this.config.title;
     }
 
     /**
@@ -70,7 +71,9 @@ define(function (require) {
     };
 
     Application.prototype.getHeaders = function(entityName, action) {
-        return typeof(config.headers) === 'function' ? config.headers(entityName, action) : config.headers;
+        var headers = this.headers();
+
+        return typeof(headers) === 'function' ? headers(entityName, action) : headersc;
     };
 
     Configurable(Application.prototype, config);

@@ -1,5 +1,6 @@
 {
   "name": "ng-admin",
+  "version": "0.2.4",
   "dependencies": {
     "angular": "~1.2.16",
     "angular-bootstrap": "~0.11.0",
@@ -30,13 +31,13 @@
     "angular": "~1.2.16"
   },
   "homepage": "https://github.com/marmelab/ng-admin",
-  "_release": "6b264b86cf",
+  "_release": "0.2.4",
   "_resolution": {
-    "type": "branch",
-    "branch": "master",
-    "commit": "6b264b86cf86c884610b854119d44cac50b28af2"
+    "type": "version",
+    "tag": "v0.2.4",
+    "commit": "0865c49ae465b079e5eb2aff2ddb9eb9fb10f7f7"
   },
-  "_source": "git@github.com:marmelab/ng-admin.git",
-  "_target": "master",
-  "_originalSource": "git@github.com:marmelab/ng-admin.git"
+  "_source": "git://github.com/marmelab/ng-admin.git",
+  "_target": "~0.2",
+  "_originalSource": "ng-admin"
 }
