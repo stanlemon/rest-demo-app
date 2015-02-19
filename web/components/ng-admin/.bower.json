@@ -1,43 +1,60 @@
 {
   "name": "ng-admin",
-  "version": "0.2.4",
+  "main": [
+    "build/ng-admin.min.css",
+    "build/ng-admin.min.js"
+  ],
   "dependencies": {
-    "angular": "~1.2.16",
-    "angular-bootstrap": "~0.11.0",
-    "angular-resource": "~1.2.15",
-    "angular-cookies": "~1.2.15",
-    "angular-sanitize": "~1.2.15",
-    "angular-route": "~1.2.15",
+    "angular": "~1.3.1",
+    "angular-bootstrap": "~0.12.0",
+    "angular-resource": "~1.3.1",
+    "angular-cookies": "~1.3.1",
+    "angular-sanitize": "~1.3.1",
     "json3": "~3.2.6",
-    "es5-shim": "~2.1.0",
+    "es5-shim": "~3.4.0",
     "jquery": "~1.11.0",
     "requirejs": "~2.1.14",
     "requirejs-text": "~2.0.12",
-    "bootstrap-sass-official": "~3.1.0",
+    "bootstrap-sass-official": "~3.3.0",
     "restangular": "~1.4.0",
-    "angular-ui-router": "~0.2.10",
-    "bootstrap": "~3.1.1",
+    "angular-ui-router": "~0.2.13",
+    "bootstrap": "~3.3.1",
     "fontawesome": "~4.1.0",
     "humane": "~3.2.0",
     "nprogress": "~0.1.6",
-    "textAngular": "~1.2.2"
+    "textAngular": "~1.2.2",
+    "ngInflection": "~1.0.0",
+    "angular-ui-codemirror": "~0.2.2",
+    "jsonlint": "~1.6.0",
+    "ng-file-upload": "~2.2.2"
   },
   "devDependencies": {
-    "angular-mocks": "1.2.15",
+    "angular-mocks": "~1.3.1",
     "angular-scenario": "1.2.15",
     "almond": "~0.3.0"
   },
   "resolutions": {
-    "angular": "~1.2.16"
+    "angular": "~1.3.1"
   },
+  "ignore": [
+    "examples",
+    "grunt",
+    "src",
+    ".*",
+    "Gruntfile.js",
+    "*.html",
+    "Makefile",
+    "*.json",
+    "UPGRADE-*"
+  ],
   "homepage": "https://github.com/marmelab/ng-admin",
-  "_release": "0.2.4",
+  "_release": "f53dbfb832",
   "_resolution": {
-    "type": "version",
-    "tag": "v0.2.4",
-    "commit": "0865c49ae465b079e5eb2aff2ddb9eb9fb10f7f7"
+    "type": "branch",
+    "branch": "master",
+    "commit": "f53dbfb832491399c4545c29ca6dda943dac12a0"
   },
   "_source": "git://github.com/marmelab/ng-admin.git",
-  "_target": "~0.2",
+  "_target": "master",
   "_originalSource": "ng-admin"
 }
