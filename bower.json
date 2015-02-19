@@ -1,6 +1,6 @@
 {
   "name": "lemon-rest-bundle-demo",
   "dependencies": {
-    "ng-admin": "~0.2"
+    "ng-admin": "master"
   }
 }
