@@ -3,39 +3,25 @@
 
     var app = angular.module('myApp', ['ng-admin']);
 
-    app.directive('customPostLink', ['$location', function($location) {
-        return {
-            restrict: 'E',
-            template: '<a ng-click="displayPost(entity)">View&nbsp;post</a>',
-            controller: function($scope, $location) {},
-            link: function($scope, element, attributes) {
-                $scope.displayPost = function(entity) {
-                    var postId = entity.getField('post_id').value;
-                    $location.path('/edit/post/' + postId);
-                }
-            }
-        }
-    }]);
-
-    function truncate(value) {
-        if (!value) {
-            return '';
-        }
-
-        return value.length > 50 ? value.substr(0, 50) + '...' : value;
-    }
-
+    // use custom query parameters function to format the API request correctly
     app.config(function(RestangularProvider) {
-        // use the custom query parameters function to format the API request correctly
         RestangularProvider.addFullRequestInterceptor(function(element, operation, what, url, headers, params) {
             if (operation == "getList") {
                 // custom pagination params
-                params._offset = (params._page - 1) * params._perPage;
-                params._limit = params._perPage;
+                params._start = (params._page - 1) * params._perPage;
+                params._end = params._page * params._perPage;
                 delete params._page;
                 delete params._perPage;
 
-                // custom filter params
+                // custom sort params
+                if (params._sortField) {
+                    params._orderBy = params._sortField;
+                    params._orderDir = params._sortDir;
+                    delete params._sortField;
+                    delete params._sortDir;
+                }
+
+                // custom filters
                 if (params._filters) {
                     for (var filter in params._filters) {
                         params[filter] = params._filters[filter];
@@ -43,6 +29,7 @@
                     delete params._filters;
                 }
             }
+
             return { params: params };
         });
     });
@@ -52,69 +39,75 @@
             var nga = NgAdminConfigurationProvider;
             var post = nga.entity('post');
 
+            post.menuView()
+                .icon('<span class="glyphicon glyphicon-pencil"></span>');
+
             post.dashboardView()
                 .fields([
                     nga.field('id', 'number'),
-                    nga.field('title', 'string'),
-                    nga.field('body', 'text').map(truncate),
-                    nga.field('tags', 'reference_many')
-                        .targetEntity(nga.entity('tag'))
-                        .targetField(nga.field('name')),
+                    nga.field('title'),
+                    nga.field('body', 'text'),
                 ]);
 
             post.listView()
-                .infinitePagination(false)
                 .fields([
                     nga.field('id', 'number'),
-                    nga.field('title', 'string'),
-                    nga.field('body', 'text').map(truncate),
+                    nga.field('title'),
+                    nga.field('body', 'text'),
                     nga.field('tags', 'reference_many')
                         .targetEntity(nga.entity('tag'))
-                        .targetField(nga.field('name'))
+                        .targetField(nga.field('name')),
                 ])
                 .listActions(['show', 'edit', 'delete']);
 
             post.creationView()
                 .fields([
-                    nga.field('title', 'string'),
+                    nga.field('title'),
                     nga.field('body', 'text'),
                     nga.field('tags', 'reference_many')
                         .targetEntity(nga.entity('tag'))
-                        .targetField(nga.field('name'))
+                        .targetField(nga.field('name')),
                 ]);
 
             post.editionView()
                 .fields([
-                    nga.field('id', 'number'),
-                    nga.field('title', 'string'),
+                    nga.field('id', 'number')
+                        .editable(false)
+                        .isDetailLink(false),
+                    nga.field('title'),
                     nga.field('body', 'text'),
-                    nga.field('tags', 'reference_many')
-                        .targetEntity(nga.entity('tag'))
-                        .targetField(nga.field('name')),
                     nga.field('comments', 'referenced_list')
                         .targetEntity(nga.entity('comment'))
                         .targetReferenceField('post_id')
                         .targetFields([
                             nga.field('id', 'number'),
                             nga.field('body', 'text'),
-                    ])
+                            nga.field('created_at', 'date'),
+
+                    ]),
+                    nga.field('tags', 'reference_many')
+                        .targetEntity(nga.entity('tag'))
+                        .targetField(nga.field('name')),
                 ]);
 
             post.showView()
                 .fields([
-                    nga.field('id', 'number'),
-                    nga.field('title', 'string'),
+                    nga.field('id', 'number')
+                        .isDetailLink(false),
+                    nga.field('title'),
                     nga.field('body', 'text'),
-                    nga.field('tags', 'reference_many')
-                        .targetEntity(nga.entity('tag'))
-                        .targetField(nga.field('name')),
                     nga.field('comments', 'referenced_list')
                         .targetEntity(nga.entity('comment'))
                         .targetReferenceField('post_id')
                         .targetFields([
                             nga.field('id', 'number'),
                             nga.field('body', 'text'),
-                    ])
+                            nga.field('created_at', 'date'),
+
+                    ]),
+                    nga.field('tags', 'reference_many')
+                        .targetEntity(nga.entity('tag'))
+                        .targetField(nga.field('name')),
                 ]);
 
             return post;
@@ -126,18 +119,17 @@
             var nga = NgAdminConfigurationProvider;
             var comment = nga.entity('comment');
 
+            comment.menuView()
+                .icon('<span class="glyphicon glyphicon-comment"></span>');
+
             comment.dashboardView()
                 .fields([
                     nga.field('id', 'number'),
                     nga.field('body', 'text'),
                     nga.field('created_at', 'date'),
-                    nga.field('post_id', 'reference')
-                        .targetEntity(nga.entity('post'))
-                        .targetField(nga.field('title'))
                 ]);
 
             comment.listView()
-                .infinitePagination(true)
                 .fields([
                     nga.field('id', 'number'),
                     nga.field('body', 'text'),
@@ -146,20 +138,7 @@
                         .targetEntity(nga.entity('post'))
                         .targetField(nga.field('title')),
                 ])
-                .listActions(['show', 'edit', 'delete'])
-                .filters([
-                    nga.field('today', 'boolean').map(function() {
-                        var now = new Date(),
-                            year = now.getFullYear(),
-                            month = now.getMonth() + 1,
-                            day = now.getDate();
-                        month = month < 10 ? '0' + month : month;
-                        day = day < 10 ? '0' + day : day;
-                        return {
-                            created_at: [year, month, day].join('-')
-                        };
-                    })
-                ]);
+                .listActions(['show', 'edit', 'delete']);
 
             comment.creationView()
                 .fields([
@@ -172,7 +151,9 @@
 
             comment.editionView()
                 .fields([
-                    nga.field('id', 'number'),
+                    nga.field('id', 'number')
+                        .editable(false)
+                        .isDetailLink(false),
                     nga.field('body', 'text'),
                     nga.field('created_at', 'date'),
                     nga.field('post_id', 'reference')
@@ -182,7 +163,8 @@
 
             comment.showView()
                 .fields([
-                    nga.field('id', 'number'),
+                    nga.field('id', 'number')
+                        .isDetailLink(false),
                     nga.field('body', 'text'),
                     nga.field('created_at', 'date'),
                     nga.field('post_id', 'reference')
@@ -199,36 +181,40 @@
             var nga = NgAdminConfigurationProvider;
             var tag = nga.entity('tag');
 
+            tag.menuView()
+                .icon('<span class="glyphicon glyphicon-tags"></span>');
+
             tag.dashboardView()
-                .infinitePagination(false)
                 .fields([
                     nga.field('id', 'number'),
-                    nga.field('name', 'string'),
+                    nga.field('name'),
                 ]);
 
             tag.listView()
                 .fields([
                     nga.field('id', 'number'),
-                    nga.field('name', 'string'),
+                    nga.field('name'),
                 ])
                 .listActions(['show', 'edit', 'delete']);
 
             tag.creationView()
                 .fields([
-                    nga.field('name', 'string')
-                        .validation({ required: true, maxLength: 150 })
+                    nga.field('name'),
                 ]);
 
             tag.editionView()
                 .fields([
-                    nga.field('id', 'number').editable(false),
-                    tag.creationView().fields(),
+                    nga.field('id', 'number')
+                        .editable(false)
+                        .isDetailLink(false),
+                    nga.field('name'),
                 ]);
 
             tag.showView()
                 .fields([
-                    nga.field('id', 'number'),
-                    nga.field('name', 'string'),
+                    nga.field('id', 'number')
+                        .isDetailLink(false),
+                    nga.field('name'),
                 ]);
 
             return tag;
