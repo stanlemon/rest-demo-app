@@ -50,6 +50,13 @@ doctrine:
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         auto_mapping: true
+        mappings:
+            demo:
+                mapping: true
+                type: annotation
+                prefix: Lemon\Model
+                dir: %kernel.root_dir%/../src/Lemon/Model
+                is_bundle: false
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -62,6 +69,4 @@ swiftmailer:
 lemon_rest:
     envelope: Lemon\RestBundle\Object\Envelope\FlattenedEnvelope
     mappings:
-        - { name: post, class: Lemon\RestDemoBundle\Entity\Post }
-        - { name: comment, class: Lemon\RestDemoBundle\Entity\Comment }
-        - { name: tag, class: Lemon\RestDemoBundle\Entity\Tag }
+        - { prefix: Lemon\Model, dir: %kernel.root_dir%/../src/Lemon/Model }

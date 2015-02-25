@@ -6,6 +6,12 @@
     "autoload": {
         "psr-0": { "": "src/", "SymfonyStandard": "app/" }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:stanlemon/NgAdminGeneratorBundle.git"
+        }
+    ],
     "require": {
         "php": ">=5.3.3",
         "symfony/symfony": "2.6.*",
@@ -19,8 +25,8 @@
         "sensio/distribution-bundle": "~3.0,>=3.0.12",
         "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
         "incenteev/composer-parameter-handler": "~2.0",
-        "stanlemon/rest-bundle": "dev-master as 0.6.0",
-        "marmelab/ng-admin-generator-bundle": "~0.1"
+        "stanlemon/rest-bundle": "dev-develop as 0.6.0",
+        "marmelab/ng-admin-generator-bundle": "dev-rest-bundle-0.7.0@dev"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

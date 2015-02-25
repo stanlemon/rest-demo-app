@@ -1,13 +1,15 @@
 <?php
-namespace Lemon\RestDemoBundle\Entity;
+namespace Lemon\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
+use Lemon\RestBundle\Annotation as Rest;
 
 /**
  * @ORM\Table()
  * @ORM\Entity()
+ * @Rest\Resource()
  */
 class Comment
 {
@@ -35,7 +37,7 @@ class Comment
     protected $post_id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Lemon\RestDemoBundle\Entity\Post", inversedBy="comments")
+     * @ORM\ManyToOne(targetEntity="Lemon\Model\Post", inversedBy="comments")
      * @ORM\JoinColumn(name="post_id", referencedColumnName="id")
      * @Serializer\Exclude()
      */

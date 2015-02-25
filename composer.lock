@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0e37a090230bc71925112e404e7aa88a",
+    "hash": "f96c426eb3efe7477ddb7ed36d4b0962",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1115,16 +1115,16 @@
         },
         {
             "name": "marmelab/ng-admin-generator-bundle",
-            "version": "0.1.0",
+            "version": "dev-rest-bundle-0.7.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/marmelab/NgAdminGeneratorBundle.git",
-                "reference": "fe324453390cdc65ebe4eb03e0ca3a8ef0563b84"
+                "url": "https://github.com/stanlemon/NgAdminGeneratorBundle.git",
+                "reference": "a615b82f6262bfce077659d99477de3779a91060"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marmelab/NgAdminGeneratorBundle/zipball/fe324453390cdc65ebe4eb03e0ca3a8ef0563b84",
-                "reference": "fe324453390cdc65ebe4eb03e0ca3a8ef0563b84",
+                "url": "https://api.github.com/repos/stanlemon/NgAdminGeneratorBundle/zipball/a615b82f6262bfce077659d99477de3779a91060",
+                "reference": "a615b82f6262bfce077659d99477de3779a91060",
                 "shasum": ""
             },
             "require": {
@@ -1144,7 +1144,6 @@
                     "marmelab\\NgAdminGeneratorBundle\\": ""
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1162,7 +1161,10 @@
                 "ng-admin",
                 "rest"
             ],
-            "time": "2015-02-24 13:13:59"
+            "support": {
+                "source": "https://github.com/stanlemon/NgAdminGeneratorBundle/tree/rest-bundle-0.7.0"
+            },
+            "time": "2015-02-25 03:15:06"
         },
         {
             "name": "monolog/monolog",
@@ -1528,16 +1530,16 @@
         },
         {
             "name": "stanlemon/rest-bundle",
-            "version": "dev-master",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stanlemon/rest-bundle.git",
-                "reference": "f3bd427b4808e4b6b573d44dfc2e8f813729dc7d"
+                "reference": "32b0821e291dea08a1dd34acf81433784d649dc7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stanlemon/rest-bundle/zipball/f3bd427b4808e4b6b573d44dfc2e8f813729dc7d",
-                "reference": "f3bd427b4808e4b6b573d44dfc2e8f813729dc7d",
+                "url": "https://api.github.com/repos/stanlemon/rest-bundle/zipball/32b0821e291dea08a1dd34acf81433784d649dc7",
+                "reference": "32b0821e291dea08a1dd34acf81433784d649dc7",
                 "shasum": ""
             },
             "require": {
@@ -1576,7 +1578,7 @@
                 }
             ],
             "description": "Create REST endpoints for Doctrine entities",
-            "time": "2015-01-10 22:09:46"
+            "time": "2015-02-08 02:02:43"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -2140,13 +2142,14 @@
         {
             "alias": "0.6.0",
             "alias_normalized": "0.6.0.0",
-            "version": "9999999-dev",
+            "version": "dev-develop",
             "package": "stanlemon/rest-bundle"
         }
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "stanlemon/rest-bundle": 20
+        "stanlemon/rest-bundle": 20,
+        "marmelab/ng-admin-generator-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

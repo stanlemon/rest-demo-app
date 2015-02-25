@@ -1,8 +1,3 @@
-lemon_rest_demo:
-    resource: "@LemonRestDemoBundle/Controller/"
-    type:     annotation
-    prefix:   /
-
 lemon_rest:
     resource: "@LemonRestBundle/Resources/config/routing.yml"
     prefix:   /api
