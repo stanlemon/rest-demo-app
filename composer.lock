@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f96c426eb3efe7477ddb7ed36d4b0962",
+    "hash": "467b6a532a899c78f41d1727a30b7515",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1117,19 +1117,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/stanlemon/NgAdminGeneratorBundle.git",
-                "reference": "17c8995fa0e39b6baa79db0cd1ceb48a47b8136c"
+                "reference": "c9b137c399951e84d493c14a6a6e82091edb7ea5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stanlemon/NgAdminGeneratorBundle/zipball/17c8995fa0e39b6baa79db0cd1ceb48a47b8136c",
-                "reference": "17c8995fa0e39b6baa79db0cd1ceb48a47b8136c",
+                "url": "https://api.github.com/repos/stanlemon/NgAdminGeneratorBundle/zipball/c9b137c399951e84d493c14a6a6e82091edb7ea5",
+                "reference": "c9b137c399951e84d493c14a6a6e82091edb7ea5",
                 "shasum": ""
             },
             "require": {
                 "doctrine/doctrine-bundle": "~1.2",
                 "doctrine/orm": "~2.4",
                 "php": ">=5.4",
-                "stanlemon/rest-bundle": "dev-develop@dev",
+                "stanlemon/rest-bundle": "0.7.*",
                 "symfony/browser-kit": "2.*",
                 "symfony/finder": "2.*",
                 "symfony/framework-bundle": "2.*",
@@ -1162,7 +1162,7 @@
             "support": {
                 "source": "https://github.com/stanlemon/NgAdminGeneratorBundle/tree/rest-bundle-0.7.0"
             },
-            "time": "2015-02-28 16:57:18"
+            "time": "2015-02-28 17:10:40"
         },
         {
             "name": "monolog/monolog",
@@ -1535,16 +1535,16 @@
         },
         {
             "name": "stanlemon/rest-bundle",
-            "version": "dev-develop",
+            "version": "0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stanlemon/rest-bundle.git",
-                "reference": "6beb48ca82b6d3c18180be391d41ce12eeae64ad"
+                "reference": "fe93a3bb4f21a76aa76da4491916421d646b2b22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stanlemon/rest-bundle/zipball/6beb48ca82b6d3c18180be391d41ce12eeae64ad",
-                "reference": "6beb48ca82b6d3c18180be391d41ce12eeae64ad",
+                "url": "https://api.github.com/repos/stanlemon/rest-bundle/zipball/fe93a3bb4f21a76aa76da4491916421d646b2b22",
+                "reference": "fe93a3bb4f21a76aa76da4491916421d646b2b22",
                 "shasum": ""
             },
             "require": {
@@ -1583,7 +1583,7 @@
                 }
             ],
             "description": "Create REST endpoints for Doctrine entities",
-            "time": "2015-02-28 16:32:30"
+            "time": "2015-02-28 17:06:35"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -2143,17 +2143,9 @@
             "time": "2015-02-11 07:21:23"
         }
     ],
-    "aliases": [
-        {
-            "alias": "0.6.0",
-            "alias_normalized": "0.6.0.0",
-            "version": "dev-develop",
-            "package": "stanlemon/rest-bundle"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "stanlemon/rest-bundle": 20,
         "marmelab/ng-admin-generator-bundle": 20
     },
     "prefer-stable": false,

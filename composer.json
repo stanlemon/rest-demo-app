@@ -25,7 +25,7 @@
         "sensio/distribution-bundle": "~3.0,>=3.0.12",
         "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
         "incenteev/composer-parameter-handler": "~2.0",
-        "stanlemon/rest-bundle": "dev-develop as 0.6.0",
+        "stanlemon/rest-bundle": "0.7.*",
         "marmelab/ng-admin-generator-bundle": "dev-rest-bundle-0.7.0@dev"
     },
     "require-dev": {
