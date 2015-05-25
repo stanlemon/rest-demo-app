@@ -1,5 +1,9 @@
 <?php
 
+if ($_SERVER['REQUEST_URI'] == '/') {
+    header('Location: /index.html');
+}
+
 use Symfony\Component\ClassLoader\ApcClassLoader;
 use Symfony\Component\HttpFoundation\Request;
 
