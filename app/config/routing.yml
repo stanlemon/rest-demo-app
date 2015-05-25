@@ -1,3 +1,10 @@
 lemon_rest:
     resource: "@LemonRestBundle/Resources/config/routing.yml"
     prefix:   /api
+
+root:
+    path: /
+    defaults:
+        _controller: FrameworkBundle:Redirect:urlRedirect
+        path: /index.html
+        permanent: true
