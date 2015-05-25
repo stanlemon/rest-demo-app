@@ -3,30 +3,8 @@
 
     var app = angular.module('myApp', ['ng-admin']);
 
-    app.directive('customPostLink', ['$location', function($location) {
-        return {
-            restrict: 'E',
-            template: '<a ng-click="displayPost(entity)">View&nbsp;post</a>',
-            controller: function($scope, $location) {},
-            link: function($scope, element, attributes) {
-                $scope.displayPost = function(entity) {
-                    var postId = entity.getField('post_id').value;
-                    $location.path('/edit/post/' + postId);
-                }
-            }
-        }
-    }]);
-
-    function truncate(value) {
-        if (!value) {
-            return '';
-        }
-
-        return value.length > 50 ? value.substr(0, 50) + '...' : value;
-    }
-
+    // use custom query parameters function to format the API request correctly
     app.config(function(RestangularProvider) {
-        // use the custom query parameters function to format the API request correctly
         RestangularProvider.addFullRequestInterceptor(function(element, operation, what, url, headers, params) {
             if (operation == "getList") {
                 // custom pagination params
@@ -35,7 +13,15 @@
                 delete params._page;
                 delete params._perPage;
 
-                // custom filter params
+                // custom sort params
+                if (params._sortField) {
+                    params._orderBy = params._sortField;
+                    params._orderDir = params._sortDir;
+                    delete params._sortField;
+                    delete params._sortDir;
+                }
+
+                // custom filters
                 if (params._filters) {
                     for (var filter in params._filters) {
                         params[filter] = params._filters[filter];
@@ -43,207 +29,231 @@
                     delete params._filters;
                 }
             }
+
             return { params: params };
         });
     });
 
-    app.config(function($provide, NgAdminConfigurationProvider) {
-        $provide.factory("PostAdmin", function() {
+    app.config(function($provide, NgAdminConfigurationProvider, RestangularProvider) {
+        $provide.factory("CommentsAdmin", function() {
             var nga = NgAdminConfigurationProvider;
-            var post = nga.entity('post');
+            var comments = nga.entity('comments');
 
-            post.dashboardView()
+            RestangularProvider.addElementTransformer('comments', function(element) {
+                if (element.post) {
+                    element.post = element.post.id;
+                }
+
+                return element;
+            });
+
+            comments.menuView()
+                .icon('<span class="glyphicon glyphicon-comment"></span>');
+
+            comments.dashboardView()
+                .title('Recent comments')
+                .limit(5)
                 .fields([
                     nga.field('id', 'number'),
-                    nga.field('title', 'string'),
-                    nga.field('body', 'text').map(truncate),
-                    nga.field('tags', 'reference_many')
-                        .targetEntity(nga.entity('tag'))
-                        .targetField(nga.field('name')),
+                    nga.field('body', 'wysiwyg').stripTags(true),
+                    nga.field('created_at', 'date'),
                 ]);
 
-            post.listView()
-                .infinitePagination(false)
+            comments.listView()
                 .fields([
                     nga.field('id', 'number'),
-                    nga.field('title', 'string'),
-                    nga.field('body', 'text').map(truncate),
-                    nga.field('tags', 'reference_many')
-                        .targetEntity(nga.entity('tag'))
-                        .targetField(nga.field('name'))
+                    nga.field('body', 'wysiwyg').stripTags(true),
+                    nga.field('created_at', 'date'),
+                    nga.field('post', 'reference')
+                        .targetEntity(nga.entity('posts'))
+                        .targetField(nga.field('title')),
                 ])
                 .listActions(['show', 'edit', 'delete']);
 
-            post.creationView()
+            comments.creationView()
                 .fields([
-                    nga.field('title', 'string'),
-                    nga.field('body', 'text'),
-                    nga.field('tags', 'reference_many')
-                        .targetEntity(nga.entity('tag'))
-                        .targetField(nga.field('name'))
+                    nga.field('body', 'wysiwyg'),
+                    nga.field('created_at', 'date'),
+                    nga.field('post', 'reference')
+                        .targetEntity(nga.entity('posts'))
+                        .targetField(nga.field('title')),
                 ]);
 
-            post.editionView()
+            comments.editionView()
                 .fields([
-                    nga.field('id', 'number'),
-                    nga.field('title', 'string'),
-                    nga.field('body', 'text'),
-                    nga.field('tags', 'reference_many')
-                        .targetEntity(nga.entity('tag'))
-                        .targetField(nga.field('name')),
-                    nga.field('comments', 'referenced_list')
-                        .targetEntity(nga.entity('comment'))
-                        .targetReferenceField('post_id')
-                        .targetFields([
-                            nga.field('id', 'number'),
-                            nga.field('body', 'text'),
-                    ])
+                    nga.field('id', 'number')
+                        .editable(false)
+                        .isDetailLink(false),
+                    nga.field('body', 'wysiwyg'),
+                    nga.field('created_at', 'date'),
+                    nga.field('post', 'reference')
+                        .targetEntity(nga.entity('posts'))
+                        .targetField(nga.field('title')),
                 ]);
 
-            post.showView()
+            comments.showView()
                 .fields([
-                    nga.field('id', 'number'),
-                    nga.field('title', 'string'),
-                    nga.field('body', 'text'),
-                    nga.field('tags', 'reference_many')
-                        .targetEntity(nga.entity('tag'))
-                        .targetField(nga.field('name')),
-                    nga.field('comments', 'referenced_list')
-                        .targetEntity(nga.entity('comment'))
-                        .targetReferenceField('post_id')
-                        .targetFields([
-                            nga.field('id', 'number'),
-                            nga.field('body', 'text'),
-                    ])
+                    nga.field('id', 'number')
+                        .isDetailLink(false),
+                    nga.field('body', 'wysiwyg'),
+                    nga.field('created_at', 'date'),
+                    nga.field('post', 'reference')
+                        .targetEntity(nga.entity('posts'))
+                        .targetField(nga.field('title')),
                 ]);
 
-            return post;
+            return comments;
         });
     });
 
-    app.config(function($provide, NgAdminConfigurationProvider) {
-        $provide.factory("CommentAdmin", function() {
+    app.config(function($provide, NgAdminConfigurationProvider, RestangularProvider) {
+        $provide.factory("PostsAdmin", function() {
             var nga = NgAdminConfigurationProvider;
-            var comment = nga.entity('comment');
+            var posts = nga.entity('posts');
 
-            comment.dashboardView()
+            RestangularProvider.addElementTransformer('posts', function(element) {
+                if (element.tags) {
+                    element.tags = element.tags.map(function(item) {
+                        return item.id;
+                    });
+                }
+
+                return element;
+            });
+
+            posts.menuView()
+                .icon('<span class="glyphicon glyphicon-pencil"></span>');
+
+            posts.dashboardView()
+                .title('Recent posts')
+                .limit(5)
                 .fields([
                     nga.field('id', 'number'),
-                    nga.field('body', 'text'),
-                    nga.field('created_at', 'date'),
-                    nga.field('post_id', 'reference')
-                        .targetEntity(nga.entity('post'))
-                        .targetField(nga.field('title'))
+                    nga.field('title'),
+                    nga.field('body', 'wysiwyg').stripTags(true),
                 ]);
 
-            comment.listView()
-                .infinitePagination(true)
+            posts.listView()
                 .fields([
                     nga.field('id', 'number'),
-                    nga.field('body', 'text'),
-                    nga.field('created_at', 'date'),
-                    nga.field('post_id', 'reference')
-                        .targetEntity(nga.entity('post'))
-                        .targetField(nga.field('title')),
-                ])
-                .listActions(['show', 'edit', 'delete'])
-                .filters([
-                    nga.field('today', 'boolean').map(function() {
-                        var now = new Date(),
-                            year = now.getFullYear(),
-                            month = now.getMonth() + 1,
-                            day = now.getDate();
-                        month = month < 10 ? '0' + month : month;
-                        day = day < 10 ? '0' + day : day;
-                        return {
-                            created_at: [year, month, day].join('-')
-                        };
-                    })
-                ]);
-
-            comment.creationView()
-                .fields([
-                    nga.field('body', 'text'),
-                    nga.field('created_at', 'date'),
-                    nga.field('post_id', 'reference')
-                        .targetEntity(nga.entity('post'))
-                        .targetField(nga.field('title')),
-                ]);
-
-            comment.editionView()
-                .fields([
-                    nga.field('id', 'number'),
-                    nga.field('body', 'text'),
-                    nga.field('created_at', 'date'),
-                    nga.field('post_id', 'reference')
-                        .targetEntity(nga.entity('post'))
-                        .targetField(nga.field('title')),
-                ]);
-
-            comment.showView()
-                .fields([
-                    nga.field('id', 'number'),
-                    nga.field('body', 'text'),
-                    nga.field('created_at', 'date'),
-                    nga.field('post_id', 'reference')
-                        .targetEntity(nga.entity('post'))
-                        .targetField(nga.field('title')),
-                ]);
-
-            return comment;
-        });
-    });
-
-    app.config(function($provide, NgAdminConfigurationProvider) {
-        $provide.factory("TagAdmin", function() {
-            var nga = NgAdminConfigurationProvider;
-            var tag = nga.entity('tag');
-
-            tag.dashboardView()
-                .infinitePagination(false)
-                .fields([
-                    nga.field('id', 'number'),
-                    nga.field('name', 'string'),
-                ]);
-
-            tag.listView()
-                .fields([
-                    nga.field('id', 'number'),
-                    nga.field('name', 'string'),
+                    nga.field('title'),
+                    nga.field('body', 'wysiwyg').stripTags(true),
+                    nga.field('tags', 'reference_many')
+                        .targetEntity(nga.entity('tags'))
+                        .targetField(nga.field('name')),
                 ])
                 .listActions(['show', 'edit', 'delete']);
 
-            tag.creationView()
+            posts.creationView()
                 .fields([
-                    nga.field('name', 'string')
-                        .validation({ required: true, maxLength: 150 })
+                    nga.field('title'),
+                    nga.field('body', 'wysiwyg'),
+                    nga.field('tags', 'reference_many')
+                        .targetEntity(nga.entity('tags'))
+                        .targetField(nga.field('name')),
                 ]);
 
-            tag.editionView()
+            posts.editionView()
                 .fields([
-                    nga.field('id', 'number').editable(false),
-                    tag.creationView().fields(),
+                    nga.field('id', 'number')
+                        .editable(false)
+                        .isDetailLink(false),
+                    nga.field('title'),
+                    nga.field('body', 'wysiwyg'),
+                    nga.field('comments', 'referenced_list')
+                        .targetEntity(nga.entity('comments'))
+                        .targetReferenceField('post_id')
+                        .targetFields([
+                            nga.field('id', 'number'),
+                            nga.field('body', 'wysiwyg').stripTags(true),
+                            nga.field('created_at', 'date'),
+
+                    ]),
+                    nga.field('tags', 'reference_many')
+                        .targetEntity(nga.entity('tags'))
+                        .targetField(nga.field('name')),
                 ]);
 
-            tag.showView()
+            posts.showView()
                 .fields([
-                    nga.field('id', 'number'),
-                    nga.field('name', 'string'),
+                    nga.field('id', 'number')
+                        .isDetailLink(false),
+                    nga.field('title'),
+                    nga.field('body', 'wysiwyg'),
+                    nga.field('comments', 'referenced_list')
+                        .targetEntity(nga.entity('comments'))
+                        .targetReferenceField('post_id')
+                        .targetFields([
+                            nga.field('id', 'number'),
+                            nga.field('body', 'wysiwyg').stripTags(true),
+                            nga.field('created_at', 'date'),
+
+                    ]),
+                    nga.field('tags', 'reference_many')
+                        .targetEntity(nga.entity('tags'))
+                        .targetField(nga.field('name')),
                 ]);
 
-            return tag;
+            return posts;
         });
     });
 
-    app.config(function(NgAdminConfigurationProvider, PostAdminProvider, CommentAdminProvider, TagAdminProvider) {
+    app.config(function($provide, NgAdminConfigurationProvider) {
+        $provide.factory("TagsAdmin", function() {
+            var nga = NgAdminConfigurationProvider;
+            var tags = nga.entity('tags');
+
+            tags.menuView()
+                .icon('<span class="glyphicon glyphicon-tags"></span>');
+
+            tags.dashboardView()
+                .title('Recent tags')
+                .limit(5)
+                .fields([
+                    nga.field('id', 'number'),
+                    nga.field('name'),
+                ]);
+
+            tags.listView()
+                .fields([
+                    nga.field('id', 'number'),
+                    nga.field('name'),
+                ])
+                .listActions(['show', 'edit', 'delete']);
+
+            tags.creationView()
+                .fields([
+                    nga.field('name'),
+                ]);
+
+            tags.editionView()
+                .fields([
+                    nga.field('id', 'number')
+                        .editable(false)
+                        .isDetailLink(false),
+                    nga.field('name'),
+                ]);
+
+            tags.showView()
+                .fields([
+                    nga.field('id', 'number')
+                        .isDetailLink(false),
+                    nga.field('name'),
+                ]);
+
+            return tags;
+        });
+    });
+
+    app.config(function(NgAdminConfigurationProvider, CommentsAdminProvider, PostsAdminProvider, TagsAdminProvider) {
         var admin = NgAdminConfigurationProvider
-            .application('')
-            .baseApiUrl(location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/api/')
+            .application('LemonRestBundle Demo')
+            .baseApiUrl(location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/app.php/api/')
 
         admin
-            .addEntity(PostAdminProvider.$get())
-            .addEntity(CommentAdminProvider.$get())
-            .addEntity(TagAdminProvider.$get())
+            .addEntity(CommentsAdminProvider.$get())
+            .addEntity(PostsAdminProvider.$get())
+            .addEntity(TagsAdminProvider.$get())
         ;
 
         NgAdminConfigurationProvider.configure(admin);
