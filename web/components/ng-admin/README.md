@@ -1,6 +1,8 @@
 ng-admin [![Build Status](https://travis-ci.org/marmelab/ng-admin.png?branch=master)](https://travis-ci.org/marmelab/ng-admin)
 ========
 
+[![Join the chat at https://gitter.im/marmelab/ng-admin](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/marmelab/ng-admin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Plug me to your RESTFul API to get a complete administration tool (CRUD, multi-model relationships, dashboard, complex form widgets) in no time!
 
 [![Screencast](http://marmelab.com/ng-admin/images/screencast.png)](https://vimeo.com/118697682)
@@ -11,11 +13,13 @@ Check out the [online demo](http://ng-admin.marmelab.com/) ([source](https://git
 * [Example Configuration](#example-configuration)
 * [Entity Configuration](#entity-configuration)
 * [View Configuration](#view-configuration)
+* [Menu Configuration](#menu-configuration)
 * [Reusable Directives](#reusable-directives)
 * [Relationships](#relationships)
 * [Customizing the API Mapping](doc/API-mapping.md)
 * [Theming](doc/Theming.md)
 * [Adding Custom Pages](doc/Custom-pages.md)
+* [Adding Custom Types](doc/Custom-types.md)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -58,7 +62,7 @@ app.config(function (NgAdminConfigurationProvider) {
     post.creationView().fields(/* see example below */);
     post.editionView().fields(/* see example below */);
 
-    nga.configure(app);
+    NgAdminProvider.configure(app);
 });
 ```
 
@@ -91,13 +95,10 @@ app.config(function (NgAdminConfigurationProvider) {
 
     // customize entities and views
 
-    post.menuView()
-        .icon('<span class="glyphicon glyphicon-file"></span>'); // customize the entity menu icon
-
     post.dashboardView() // customize the dashboard panel for this entity
         .title('Recent posts')
         .order(1) // display the post panel first in the dashboard
-        .limit(5) // limit the panel to the 5 latest posts
+        .perPage(5) // limit the panel to the 5 latest posts
         .fields([nga.field('title').isDetailLink(true).map(truncate)]); // fields() called with arguments add fields to the view
 
     post.listView()
@@ -198,7 +199,7 @@ Defines the API endpoint for all views of this entity. It can be a string or a f
 
 ### View Types
 
-Each entity has 7 views that you can customize:
+Each entity has 6 views that you can customize:
 
 - `listView`
 - `creationView`
@@ -206,7 +207,6 @@ Each entity has 7 views that you can customize:
 - `showView` (unused by default)
 - `deletionView`
 - `dashboardView`: another special view to define a panel in the dashboard (the ng-admin homepage) for an entity.
-- `menuView`: another special view to define the appearance of the entity menu in the sidebar
 
 ### General View Settings
 
@@ -232,17 +232,17 @@ The title of the view. ng-admin sees it as a template, and compiles it with the 
 A text displayed below the title. Like the `title` ng-admin sees it as a template and it can be customized in the same way.
 
 * `actions(String|Array)`
-Customize the list of actions for this view. You can pass a list of button names among 'back', 'list', 'show', create', 'edit', 'delete':
+Customize the list of actions for this view. You can pass a list of button names among 'back', 'list', 'show', create', 'edit', 'delete', 'batch', and 'export':
 
         editionView.actions(['show', 'list', 'delete']);
 
-Alternately, if you pass a string, it is compiled just like an Angular template, with access to the current `entry` in the scope. This allows to easily add custom actions, or customize the buttons appearance:
+    Alternately, if you pass a string, it is compiled just like an Angular template, with access to the current `entry` in the scope. This allows to easily add custom actions, or customize the buttons appearance:
 
-    var template = '<show-button entry="entry" entity="entity" size="sm"></show-button>' +
-                   '<delete-button entry="entry" entity="entity" size="sm"></delete-button>' +
-                   '<my-custom-directive entry="entry"></my-custom-directive>' +
-                   '<back-button></back-button>';
-    editionView.actions(template);
+        var template = '<show-button entry="entry" entity="entity" size="sm"></show-button>' +
+            '<delete-button entry="entry" entity="entity" size="sm"></delete-button>' +
+            '<my-custom-directive entry="entry"></my-custom-directive>' +
+            '<back-button></back-button>';
+        editionView.actions(template);
 
 * `disable()`
 Disable this view. Useful e.g. to hide the panel for one entity in the dashboard, or to disable views that modify data and only let the `listView` enabled
@@ -258,24 +258,11 @@ Defines the API endpoint for a view. It can be a string or a function.
 
 The `dashboardView` also defines `sortField` and `sortDir` fields like the `listView`.
 
-* `limit(Number)`
+* `perPage(Number)`
 Set the number of items.
 
 * `order(Number)`
 Define the order of the Dashboard panel for this entity in the dashboard
-
-### menuView Settings
-
-* `icon(String)`
-Override the default icon for the Entity in the sidebar menu. You can use any of Bootstrap's Gmyphicons, or any HTML markup that fits your need.
-
-        post.menuView().icon('<span class="glyphicon glyphicon-file"></span>');
-
-* `order(Integer)`
-Set the menu position in the sidebar. By default, Entities appear in the order in which they were added to the application.
-
-* `disable()`
-Hide the entity from the sidebar.
 
 ### listView Settings
 
@@ -305,11 +292,43 @@ Add an action column with action buttons on each line. You can pass a list of bu
 
         listView.listActions(['edit', 'delete']);
 
-Alternately, if you pass a string, it is compiled just like an Angular template, with access to the current `entry` in the scope. This allows to add custom actions on each line:
+    Alternately, if you pass a string, it is compiled just like an Angular template, with access to the current `entry` in the scope. This allows to add custom actions on each line:
 
-    var template = '<show-button entry="entry" entity="entity" size="xs"></show-button>'+
+        var template = '<show-button entry="entry" entity="entity" size="xs"></show-button>' +
                    '<my-custom-directive entry="entry"></my-custom-directive>';
-    listView.listActions(template);
+        listView.listActions(template);
+
+* `batchActions(String|Array)`
+Add your own batch action directives.
+
+    The datagrid contains a selection column (an initial column made of checkboxes). Once the user selects lines, a button appears and displays the number of selected entries. A click on this button reveals the list of "batch actions", i.e. actions that can be performed on a selection of entries. By default, the only batch action available is a batch delete.
+
+    Add your own directives to the list of batch acctions at will. The scope contains a `selection` variable, which holds the current selection:
+
+        listView.batchActions(['delete', '<my-custom-directive selection="selection"></my-custom-directive>'])
+
+    To remove the list of checkboxes, simply set an empty `batchActions` list on the view:
+
+        listView.batchActions([])
+
+    *Tip*: The `selection` variable is also in the scope of the main view actions.
+
+        listView.actions('create', '<my-custom-directive selection="selection"></my-custom-directive>');
+
+* `exportFields(Array)`
+Set the fields for the CSV export function. By default, ng-admin uses the fields displayed in the datagrid, but you can choose to export a different set of fields.
+
+        listView.exportFields([
+            nga.field('id', 'number'),
+            nga.field('author'),
+            nga.field('post_id', 'reference')
+                .label('Post')
+                .map(truncate)
+                .targetEntity(post)
+                .targetField(nga.field('title').map(truncate))
+            nga.field('body', 'wysiwyg')
+                .stripTags(true)
+        ]);
 
 ## Fields
 
@@ -318,7 +337,7 @@ A field is the representation of a property of an entity.
 ### General Field Settings
 
 * `nga.field(name, type)`
-Create a new field of the given type. Default type is 'string', so you can omit it. Bundled types include `number`, `string`, `text`, `boolean`, `wysiwyg`, `email`, `date`, `choice`, `choices`, `json`, `file`, and `template`
+Create a new field of the given type. Default type is 'string', so you can omit it. Bundled types include `number`, `string`, `text`, `boolean`, `wysiwyg`, `email`, `date`, `datetime`,  `choice`, `choices`, `json`, `file`, and `template`
 
 * `label(string label)`
 Define the label of the field. Defaults to the uppercased field name.
@@ -329,17 +348,11 @@ Define if the field is editable in the edition form. Usefult to display a field 
 * `order(number|null)`
 Define the position of the field in the view.
 
-* `format(string ['yyyy-MM-dd' by default])`
-Define the format for `date` type.
-
 * `isDetailLink(boolean)`
 Tell if the value is a link in the list view. Default to true for the identifier and references field, false otherwise. The link points to the edition view, except for read-only entities, where it points to the show view.
 
 * `detailLinkRoute(string)`
 Define the route for a link in the list view, i.e. `isDetailLink` of the field is true. The default is `edit`, hence the link points to the edition view. The other option is `show` to point to the show view.
-
-* `choices([{value: '', label: ''}, ...])`
-Define array of choices for `choice` type. A choice has both a value and a label.
 
 * `map(function)`
 Define a custom function to transform the value. It receive the value and the corresponding entry. Works in list, edit views and references.
@@ -378,14 +391,152 @@ A list of CSS classes to be added to the corresponding field. If you provide a f
 * `defaultValue(*)`
 Define the default value of the field in the creation form.
 
+### `number` Field Settings
+
+* `format(string)`
+Format for number to string conversion. Based on [Numeral.js](http://numeraljs.com/), which uses a syntax similar to Excel. You can configure the locale and create named formats by following [angular-numeraljs](https://github.com/baumandm/angular-numeraljs) instructions.
+
+        nga.field('cost', 'number').format('$0,0.00');
+        // now 1234.5 will render as '$1,234.50'
+
+### `choice` and `choices` Field Settings
+
+* `choices(array|function)`
+Define array of choices for `choice` type. 
+
+    When given an array, each choice must be an object litteral with both a value and a label.
+
+        nga.field('currency', 'choice')
+            .choices([
+              { value: 'USD', label: 'dollar ($)' },
+              { value: 'EUR', label: 'euro (€)' },
+            ]);
+
+    When given a function, the returned choice list must be in the same format (value and label) and can depend on the current entry. This is useful to allow choice fields dependent on each other.
+
+        nga.field('country', 'choice')
+            .choices([
+              { value: 'FR', label: 'France' },
+              { value: 'US', label: 'USA' },
+            ]);
+        var cities = [
+            { country: 'FR', value: 'Paris', label: 'Paris' },
+            { country: 'FR', value: 'Nancy', label: 'Nancy' },
+            { country: 'US', value: 'NY', label: 'New York' },
+            { country: 'US', value: 'SF', label: 'San Francisco' }
+        ]
+        nga.field('city', 'choice')
+            .choices(function(entry) {
+                return cities.filter(function (city) {
+                    return city.country === entry.values.country
+                });
+            });
+
+    *Tip*: When using a function for choice values, if you meet the "Uncaught Error: [$rootScope:infdig] 10 $digest() iterations reached. Aborting!", that's because the `choices()` function returns a new array every time. That's a known AngularJS limitation (see the [infinite digest loop documentation](https://docs.angularjs.org/error/$rootScope/infdig)).
+
+### `date` Field Settings
+
+* `format(string ['yyyy-MM-dd' by default])`
+
+* `parse(function [remove hours, minutes and timezone by default])`
+Filter applied to modify date object returned by date picker if needed.
+
+### `datetime` Field Settings
+
+* `format(string ['yyyy-MM-dd HH:mm:ss' by default])`
+
+* `parse(function [no change by default])`
+Filter applied to modify date object returned by date picker if needed.
+
+### `template` Field Settings
+
 * `template(*)`
 Define the template to be displayed for fields of type `template` (can be a string or a function).
+
+### `file` Field Settings
 
 * `uploadInformation`
 Give upload information for `file` field type
  - `url`: url for server side upload
  - `accept`: values allowed by the standard HTML file input accept attribute
+ - `apifilename`: filename assigned by the server and returned by your API. 
+ 
+If the uploaded file is renamed server-side, you can get the new filename from an api return.    
+
+    HTTP/1.1 200 OK
+    Content-Type: application/json
+    { "picture_name": "post_12_picture1.jpg"}
+
+you can configure file field as :
+
+    nga.field('picture', 'file').uploadInformation({ 'url': 'your_url', 'apifilename': 'picture_name' })
+
 Some other properties are allowed, see https://github.com/danialfarid/angular-file-upload#upload-service for the complete list.
+
+### `wysiwyg` Field Settings
+
+* `stripTags(boolean)`
+Enable removal of all HTML tags - only the text is kept. Useful for displaying rich text in a table, or before truncation. False by default. 
+
+* `sanitize(boolean)`
+Enable HTML sanitization of WYSIWYG Editor value (removal of script tags, etc). True by default.
+
+## Menu Configuration
+
+By default, ng-admin creates a sidebar menu with one entry per entity. If you want to customize this menu (labels, icons, order, adding submenus, etc), you have to define it manually instead.
+
+The sidebar menu is built based on a `Menu` object, constructed with `nga.menu()`. A menu can have child menus. A menu can be constructed based on an entity. Here is the code to create a basic menu for the entities `post`, `comment`, and `tag`:
+
+```js
+app.menu(nga.menu()
+  .addChild(nga.menu(post))
+  .addChild(nga.menu(comment))
+  .addChild(nga.menu(tag))
+);
+```
+
+The menus appear in the order in which they were added to the main menu. The `Menu` class offers `icon()`, `title()`, and `template()` methods to customize how the menu renders.
+
+```js
+app.menu(nga.menu()
+  .addChild(nga.menu(post))
+  .addChild(nga.menu(comment).title('Comments'))
+  .addChild(nga.menu(tag).icon('<span class="glyphicon glyphicon-tags"></span>'))
+);
+```
+
+You can also choose to define a menu from scratch. In this case, you should define the internal state the menu points to using `link()`, and the function to determine whether the menu is active based on the current state with `active()`.
+
+```js
+app.menu(nga.menu()
+    .addChild(nga.menu()
+        .title('Stats')
+        .link('/stats')
+        .active(function(path) {
+            return path.indexOf('/stats') === 0;
+        })
+    )
+);
+```
+
+You can add also second-level menus.
+
+```js
+app.menu(nga.menu()
+    .addChild(nga.menu().title('Miscellaneous')
+        .addChild(nga.menu().title('Stats').link('/stats'))
+    )
+);
+```
+
+*Tip*: `app.menu()` is both a setter and a getter. You can modify an existing menu in the admin configuration by using `app.menu().getChildByTitle()`
+
+```js
+app.addEntity(post)
+app.menu().getChildByTitle('Post')
+    .title('Posts')
+    .icon('<span class="glyphicon glyphicon-file"></span>');
+```
 
 ## Reusable Directives
 
@@ -409,6 +560,18 @@ entity.listView().fields([
 
 A button linking to the related view for the given entity.
 
+* `<ma-filtered-list-button>`
+
+A button linking to an entity list view, prefiltered.
+
+```js
+entity.listView().fields([
+    // ...
+    nga.field('', 'template').label('')
+        template('<ma-filtered-list-button entity-name="comments" filter="{ post_id: entry.values.id }" size="sm">')
+]);
+```
+
 ### `listView.listActions()`
 
 The `listActions()` method available on the listView is a shortcut to adding a template field with one of the directives listed above. In practice, calling:
@@ -426,6 +589,17 @@ var template = '<ma-edit-button entry="entry" entity="entity" size="xs">' +
                '</ma-delete-button>';
 listView.fields([
     nga.field('actions', 'template').template(template)
+]);
+```
+
+You can also provide custom label using the `label` attribute:
+
+```js
+listView.listActions([
+    '<ma-edit-button entry="entry" entity="entity" label="Edit me" size="xs">' +
+    '</ma-edit-button>',
+    '<ma-delete-button entry="entry" entity="entity" label="Delete me" size="xs">' +
+    '</ma-delete-button>'
 ]);
 ```
 
@@ -460,6 +634,18 @@ Define a function that returns parameters for filtering API calls. You can use i
                 })
         ]);
 
+* `sortField(String)`
+Set the default field for list sorting. Defaults to 'id'
+
+* `sortDir(String)`
+Set the default direction for list sorting. Defaults to 'DESC'
+
+* `filters({ field1: value, field2: value, ...])`
+Add filters to the referenced results list.
+
+* `perPage(integer)`
+Define the maximum number of elements fetched and displayed in the list.
+
 ### `referenced_list` Field
 
 The `referenced_list` type also defines `label`, `order`, `map`, `list` & `validation` options like the `Field` type.
@@ -484,8 +670,17 @@ Define an array of fields that will be displayed in the list of the form.
                 ])
         ]);
 
+* `sortField(String)`
+Set the default field for list sorting. Defaults to 'id'
+
+* `sortDir(String)`
+Set the default direction for list sorting. Defaults to 'DESC'
+
+* `filters({ field1: value, field2: value, ...])`
+Add filters to the referenced results list.
+
 * `perPage(integer)`
-Define the maximum number of elements fetched and displayed in the list
+Define the maximum number of elements fetched and displayed in the list.
 
 ### `reference_many` Field
 
@@ -500,7 +695,7 @@ Define the field name used to link the referenced entity.
         myView.fields([
             nga.field('tags', 'reference_many')
                .label('Tags')
-               .isEditLink(false)
+               .isDetailLink(false)
                .targetEntity(tag) // Targeted entity
                .targetField(nga.field('name')) // Label Field to display in the list
         ])

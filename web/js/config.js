@@ -34,10 +34,18 @@
         });
     });
 
-    app.config(function($provide, NgAdminConfigurationProvider) {
+    app.config(function($provide, NgAdminConfigurationProvider, RestangularProvider) {
         $provide.factory("CommentsAdmin", function() {
             var nga = NgAdminConfigurationProvider;
             var comments = nga.entity('comments');
+
+            RestangularProvider.addElementTransformer('comments', function(element) {
+                if (element.post) {
+                    element.post = element.post.id;
+                }
+
+                return element;
+            });
 
             comments.menuView()
                 .icon('<span class="glyphicon glyphicon-comment"></span>');
@@ -47,16 +55,16 @@
                 .limit(5)
                 .fields([
                     nga.field('id', 'number'),
-                    nga.field('body', 'text'),
+                    nga.field('body', 'wysiwyg').stripTags(true),
                     nga.field('created_at', 'date'),
                 ]);
 
             comments.listView()
                 .fields([
                     nga.field('id', 'number'),
-                    nga.field('body', 'text'),
+                    nga.field('body', 'wysiwyg').stripTags(true),
                     nga.field('created_at', 'date'),
-                    nga.field('post_id', 'reference')
+                    nga.field('post', 'reference')
                         .targetEntity(nga.entity('posts'))
                         .targetField(nga.field('title')),
                 ])
@@ -64,9 +72,9 @@
 
             comments.creationView()
                 .fields([
-                    nga.field('body', 'text'),
+                    nga.field('body', 'wysiwyg'),
                     nga.field('created_at', 'date'),
-                    nga.field('post_id', 'reference')
+                    nga.field('post', 'reference')
                         .targetEntity(nga.entity('posts'))
                         .targetField(nga.field('title')),
                 ]);
@@ -76,9 +84,9 @@
                     nga.field('id', 'number')
                         .editable(false)
                         .isDetailLink(false),
-                    nga.field('body', 'text'),
+                    nga.field('body', 'wysiwyg'),
                     nga.field('created_at', 'date'),
-                    nga.field('post_id', 'reference')
+                    nga.field('post', 'reference')
                         .targetEntity(nga.entity('posts'))
                         .targetField(nga.field('title')),
                 ]);
@@ -87,9 +95,9 @@
                 .fields([
                     nga.field('id', 'number')
                         .isDetailLink(false),
-                    nga.field('body', 'text'),
+                    nga.field('body', 'wysiwyg'),
                     nga.field('created_at', 'date'),
-                    nga.field('post_id', 'reference')
+                    nga.field('post', 'reference')
                         .targetEntity(nga.entity('posts'))
                         .targetField(nga.field('title')),
                 ]);
@@ -98,10 +106,20 @@
         });
     });
 
-    app.config(function($provide, NgAdminConfigurationProvider) {
+    app.config(function($provide, NgAdminConfigurationProvider, RestangularProvider) {
         $provide.factory("PostsAdmin", function() {
             var nga = NgAdminConfigurationProvider;
             var posts = nga.entity('posts');
+
+            RestangularProvider.addElementTransformer('posts', function(element) {
+                if (element.tags) {
+                    element.tags = element.tags.map(function(item) {
+                        return item.id;
+                    });
+                }
+
+                return element;
+            });
 
             posts.menuView()
                 .icon('<span class="glyphicon glyphicon-pencil"></span>');
@@ -112,14 +130,14 @@
                 .fields([
                     nga.field('id', 'number'),
                     nga.field('title'),
-                    nga.field('body', 'text'),
+                    nga.field('body', 'wysiwyg').stripTags(true),
                 ]);
 
             posts.listView()
                 .fields([
                     nga.field('id', 'number'),
                     nga.field('title'),
-                    nga.field('body', 'text'),
+                    nga.field('body', 'wysiwyg').stripTags(true),
                     nga.field('tags', 'reference_many')
                         .targetEntity(nga.entity('tags'))
                         .targetField(nga.field('name')),
@@ -129,7 +147,7 @@
             posts.creationView()
                 .fields([
                     nga.field('title'),
-                    nga.field('body', 'text'),
+                    nga.field('body', 'wysiwyg'),
                     nga.field('tags', 'reference_many')
                         .targetEntity(nga.entity('tags'))
                         .targetField(nga.field('name')),
@@ -141,13 +159,13 @@
                         .editable(false)
                         .isDetailLink(false),
                     nga.field('title'),
-                    nga.field('body', 'text'),
+                    nga.field('body', 'wysiwyg'),
                     nga.field('comments', 'referenced_list')
                         .targetEntity(nga.entity('comments'))
                         .targetReferenceField('post_id')
                         .targetFields([
                             nga.field('id', 'number'),
-                            nga.field('body', 'text'),
+                            nga.field('body', 'wysiwyg').stripTags(true),
                             nga.field('created_at', 'date'),
 
                     ]),
@@ -161,13 +179,13 @@
                     nga.field('id', 'number')
                         .isDetailLink(false),
                     nga.field('title'),
-                    nga.field('body', 'text'),
+                    nga.field('body', 'wysiwyg'),
                     nga.field('comments', 'referenced_list')
                         .targetEntity(nga.entity('comments'))
                         .targetReferenceField('post_id')
                         .targetFields([
                             nga.field('id', 'number'),
-                            nga.field('body', 'text'),
+                            nga.field('body', 'wysiwyg').stripTags(true),
                             nga.field('created_at', 'date'),
 
                     ]),
@@ -229,7 +247,7 @@
 
     app.config(function(NgAdminConfigurationProvider, CommentsAdminProvider, PostsAdminProvider, TagsAdminProvider) {
         var admin = NgAdminConfigurationProvider
-            .application('')
+            .application('LemonRestBundle Demo')
             .baseApiUrl(location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/app.php/api/')
 
         admin
